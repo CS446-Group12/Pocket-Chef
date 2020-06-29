@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Pocket Chef</string>
+    <string name="title_pantry">Pantry</string>
+    <string name="title_recipes">Recipes</string>
+</resources>
