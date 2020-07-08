@@ -10,9 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.HashSet;
 import java.util.List;
 
 import cs446.uwaterloo.pocketchef.R;
+import cs446.uwaterloo.pocketchef.data.IngredientData;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
 
 public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.ViewHolder>{
@@ -20,9 +22,11 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
     private List<Ingredient> mIngredients;
 
     public IngredientAdapter(List<Ingredient> ingredients) {
-
         this.mIngredients = ingredients;
+    }
 
+    public void updateIngredients(List<Ingredient> ingredients) {
+        this.mIngredients = ingredients;
     }
 
     @NonNull
@@ -46,13 +50,19 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
     public void onBindViewHolder(IngredientAdapter.ViewHolder holder, int position) {
 
         // Get the data model based on position
-        Ingredient ingredient = mIngredients.get(position);
+        final Ingredient ingredient = mIngredients.get(position);
 
         // Set item views based on your views and data model
         TextView textView = holder.ingredientTextView;
         textView.setText(ingredient.getName());
-        ImageButton deleteButton = holder.deleteButton;
 
+        ImageButton deleteButton = holder.deleteButton;
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IngredientData.removeIngredients(ingredient);
+            }
+        });
     }
 
     @Override

@@ -1,7 +1,10 @@
 package cs446.uwaterloo.pocketchef.model;
 
+import androidx.annotation.NonNull;
+
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Ingredient {
 
@@ -12,6 +15,25 @@ public class Ingredient {
 
         this.name = newName;
 
+    }
+
+    @NonNull
+    public String toString() {
+        return getName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ingredient that = (Ingredient) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(expirationDate, that.expirationDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, expirationDate);
     }
 
     public void setExpirationDate(Date newExpirationDate) {

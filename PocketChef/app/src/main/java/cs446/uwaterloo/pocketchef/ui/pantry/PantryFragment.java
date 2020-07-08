@@ -1,29 +1,29 @@
 package cs446.uwaterloo.pocketchef.ui.pantry;
 
-import android.app.ActionBar;
-import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 
 import cs446.uwaterloo.pocketchef.R;
 import cs446.uwaterloo.pocketchef.adapters.IngredientAdapter;
+import cs446.uwaterloo.pocketchef.data.IngredientData;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
 
 public class PantryFragment extends Fragment {
@@ -44,11 +44,10 @@ public class PantryFragment extends Fragment {
                 DividerItemDecoration(this.getContext(), DividerItemDecoration.VERTICAL);
         pantryView.addItemDecoration(itemDecoration);
 
-        //Initialize a sample ingredient list
-        ArrayList<Ingredient> sampleIngredientsList;
-        //Populate the sample data list
-        sampleIngredientsList = Ingredient.createIngredientsList();
-        adapter = new IngredientAdapter(sampleIngredientsList);
+        // Pair the adapter and the data source
+        adapter = new IngredientAdapter(IngredientData.getCurrentIngredients());
+        IngredientData.setAdapter(adapter);
+
         //Attach the adapter to the RecyclerView
         pantryView.setAdapter(adapter);
         //Set layout manager to position the items
@@ -62,10 +61,42 @@ public class PantryFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.pantry_menu, menu);
+        inflater.inflate(R.menu.top_menu, menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.app_bar_add) {
+            addIngredient();
+        }
+        return true;
+    }
+
+    private void addIngredient() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
+        alertBuilder.setTitle("Ingredient Name");
+
+        final EditText inputField = new EditText(getContext());
+        inputField.setInputType(InputType.TYPE_CLASS_TEXT);
+        alertBuilder.setView(inputField);
+
+        alertBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Ingredient newIngredient = new Ingredient(inputField.getText().toString());
+                IngredientData.addIngredients(true, newIngredient);
+            }
+        });
+
+        alertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        alertBuilder.show();
     }
 
 }

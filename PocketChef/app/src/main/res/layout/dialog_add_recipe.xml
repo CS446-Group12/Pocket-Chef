@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/recipe_name_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_recipe_dialog_name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="18sp"
+        android:typeface="normal"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/recipe_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:autofillHints=""
+        app:layout_constraintTop_toBottomOf="@id/recipe_name_description" />
+
+    <TextView
+        android:id="@+id/recipe_ingredients_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_recipe_dialog_ingredients"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="18sp"
+        android:typeface="normal"
+        app:layout_constraintTop_toBottomOf="@+id/recipe_name" />
+
+
+    <EditText
+        android:id="@+id/recipe_ingredients"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Comma separated ingredients"
+        android:autofillHints=""
+        app:layout_constraintTop_toBottomOf="@id/recipe_ingredients_description" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
