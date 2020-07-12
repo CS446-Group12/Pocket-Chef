@@ -8,10 +8,13 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import cs446.uwaterloo.pocketchef.MainActivity;
 import cs446.uwaterloo.pocketchef.R;
 import cs446.uwaterloo.pocketchef.data.RecipeData;
 import cs446.uwaterloo.pocketchef.model.Recipe;
@@ -23,11 +26,24 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
+        final Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom recipe layout
         View recipeView = inflater.inflate(R.layout.item_recipe, parent, false);
+
+        // Create an OnClickListener for each recipe item in the RecyclerView
+        // This is used to display the recipe's contents
+        recipeView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                RecyclerView recyclerView = (RecyclerView) v.getParent();
+                int position = recyclerView.getChildLayoutPosition(v);
+                Recipe recipe = RecipeData.getCurrentRecipes().get(position);
+
+                ((MainActivity)context).displayRecipeContents(recipe);
+            }
+        });
 
         // From the inflated layout, generate a ViewHolder
         return new ViewHolder(recipeView);
