@@ -2,6 +2,7 @@ package cs446.uwaterloo.pocketchef.ui.recipes;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -34,6 +36,7 @@ public class RecipesFragment extends Fragment {
     private RecyclerView recipeView;
     private RecipeAdapter adapter;
     private Button recipesForIngredientsButton;
+    private boolean ingredientRecipesShown = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipes, container, false);
@@ -52,9 +55,18 @@ public class RecipesFragment extends Fragment {
         }
 
         recipesForIngredientsButton = view.findViewById(R.id.recipes_for_current_ingredients_button);
+        recipesForIngredientsButton.setText("Show available recipes");
         recipesForIngredientsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(ingredientRecipesShown) {
+                    recipesForIngredientsButton.setText("Show available recipes");
+                    ingredientRecipesShown = false;
+                }
+                else {
+                    recipesForIngredientsButton.setText("Show all recipes");
+                    ingredientRecipesShown = true;
+                }
                 RecipeData.switchShownRecipes();
             }
         });
