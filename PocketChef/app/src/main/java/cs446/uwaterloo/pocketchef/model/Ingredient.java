@@ -59,7 +59,7 @@ public class Ingredient implements Parcelable {
     //Method to quickly create a sample list of ingredients for testing purposes
     public static ArrayList<Ingredient> createIngredientsList() {
 
-        ArrayList<Ingredient> result = new ArrayList<Ingredient>();
+        ArrayList<Ingredient> result = new ArrayList<>();
         result.add(new Ingredient("Tomatoes"));
         result.add(new Ingredient("Cheese"));
         result.add(new Ingredient("Potatoes"));
@@ -116,9 +116,9 @@ public class Ingredient implements Parcelable {
     // Ingredient constructor with Parcel parameter
     private Ingredient(Parcel in) {
         name = in.readString();
-        Long dateValue = in.readLong();
+        long dateValue = in.readLong();
         if (dateValue != Long.MIN_VALUE) {
-            expirationDate = new Date(in.readLong());
+            expirationDate = new Date(dateValue);
         }
     }
     /* Code for implementing Parcelable ends here */
