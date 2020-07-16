@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.HashSet;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import cs446.uwaterloo.pocketchef.R;
@@ -56,6 +56,14 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
         TextView textView = holder.ingredientTextView;
         textView.setText(ingredient.getName());
 
+        TextView dateView = holder.ingredientDateView;
+        if (ingredient.getExpirationDate() != null) {
+            dateView.setText(dateView.getContext().getString(R.string.ingredient_expiration_date, SimpleDateFormat.getDateInstance().format(ingredient.getExpirationDate())));
+        } else {
+            dateView.setVisibility(View.INVISIBLE);
+        }
+
+
         ImageButton deleteButton = holder.deleteButton;
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,16 +84,17 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
 
         public TextView ingredientTextView;
         public ImageButton deleteButton;
-
+        public TextView ingredientDateView;
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
-        public ViewHolder(View itemView) {
+         public ViewHolder(View itemView) {
 
             // Stores the itemView in a public final member variable that can be used
             // to access the context from any ViewHolder instance.
             super(itemView);
 
             ingredientTextView = (TextView) itemView.findViewById(R.id.ingredient_text);
+            ingredientDateView = (TextView) itemView.findViewById(R.id.ingredient_date);
             deleteButton = (ImageButton) itemView.findViewById(R.id.delete_ingredient_button);
 
         }
