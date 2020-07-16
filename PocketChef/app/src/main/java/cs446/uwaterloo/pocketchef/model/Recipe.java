@@ -27,7 +27,7 @@ public class Recipe implements Parcelable {
     public Recipe(String name, List<Ingredient> ingredients) {
         this.name = name;
         this.ingredients = new HashSet<>(ingredients);
-        this.steps = null;
+        this.steps = new ArrayList<>();
     }
 
     public Recipe(String name, List<Ingredient> ingredients, List<String> steps) {
