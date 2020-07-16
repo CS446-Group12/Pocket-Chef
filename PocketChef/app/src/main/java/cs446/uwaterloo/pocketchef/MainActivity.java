@@ -2,6 +2,7 @@ package cs446.uwaterloo.pocketchef;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -30,40 +31,10 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
     }
 
-    // Uses FragmentTransactions to
     public void displayRecipeContents(Recipe recipe) {
         Intent intent = new Intent(MainActivity.this, CookingActivity.class);
+        intent.putExtra("recipe", recipe);
         startActivity(intent);
-
-        /*FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        // Create new fragment and transaction
-        Fragment displayRecipeFragment = new DisplayRecipeFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack
-
-        List<Fragment> fragments = fragmentManager.getFragments();
-        if(fragments != null){
-            for(Fragment fragment : fragments){
-                if(fragment != null && fragment.isVisible()) {
-                    System.out.println(fragment);
-                    transaction.hide(fragment);
-                }
-            }
-        }
-
-        //transaction.hide(fragmentManager.findFragmentById(R.id.test));
-        transaction.show(displayRecipeFragment);
-        //transaction.addToBackStack(null);
-
-        // Apply a transition animation
-        //transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
-        // Commit the transaction
-        transaction.commit();*/
     }
 
 }

@@ -1,26 +1,27 @@
 package cs446.uwaterloo.pocketchef.ui.pantry;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.InputType;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Calendar;
 
 import cs446.uwaterloo.pocketchef.R;
 import cs446.uwaterloo.pocketchef.adapters.IngredientAdapter;
@@ -90,17 +91,25 @@ public class PantryFragment extends Fragment {
 
     private void addIngredient() {
 
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
-        alertBuilder.setTitle("Ingredient Name");
+        Context context = getContext();
 
-        final EditText inputField = new EditText(getContext());
-        inputField.setInputType(InputType.TYPE_CLASS_TEXT);
-        alertBuilder.setView(inputField);
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+        alertBuilder.setTitle("Add ingredient");
+
+        final View view = View.inflate(context, R.layout.add_ingredient, null);
+
+        final EditText nameEditText = view.findViewById(R.id.add_ingredient_name);
+        final DatePicker datePicker = view.findViewById(R.id.add_ingredient_date);
+        datePicker.setMinDate(System.currentTimeMillis());
+
+        alertBuilder.setView(view);
 
         alertBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Ingredient newIngredient = new Ingredient(inputField.getText().toString());
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(datePicker.getYear(),datePicker.getMonth(),datePicker.getDayOfMonth());
+                Ingredient newIngredient = new Ingredient(nameEditText.getText().toString(), calendar.getTime());
                 IngredientData.addIngredients(true, newIngredient);
             }
         });
