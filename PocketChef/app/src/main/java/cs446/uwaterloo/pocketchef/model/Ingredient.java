@@ -30,13 +30,12 @@ public class Ingredient implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ingredient that = (Ingredient) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(expirationDate, that.expirationDate);
+        return Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, expirationDate);
+        return Objects.hash(name);
     }
 
     public void setExpirationDate(Date newExpirationDate) {
