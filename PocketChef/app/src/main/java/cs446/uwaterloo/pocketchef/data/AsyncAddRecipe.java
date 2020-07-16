@@ -17,7 +17,6 @@ public class AsyncAddRecipe extends AsyncTask<Recipe, Integer, List<Recipe>> {
 
     private static HashMap<Recipe, HashSet<Ingredient>> missingRecipes;
     private static List<Recipe> completeRecipes;
-    private static HashSet<Ingredient> allIngredients;
 
     public AsyncAddRecipe() {
         super();
@@ -27,7 +26,6 @@ public class AsyncAddRecipe extends AsyncTask<Recipe, Integer, List<Recipe>> {
     protected void onPreExecute() {
         missingRecipes = new HashMap<>(RecipeData.getRecipesWithMissingIngredients());
         completeRecipes = new ArrayList<>(RecipeData.getRecipesForCurrentIngredients());
-        allIngredients = new HashSet<>(IngredientData.getAllIngredients());
     }
 
     @Override
@@ -35,7 +33,7 @@ public class AsyncAddRecipe extends AsyncTask<Recipe, Integer, List<Recipe>> {
         HashSet<Ingredient> ingredientsUsed;
         for (final Recipe recipe : recipes) {
             ingredientsUsed = new HashSet<>(recipe.getAllIngredients());
-            ingredientsUsed.removeAll(allIngredients);
+            ingredientsUsed.removeAll(IngredientData.getAllIngredients());
             if (ingredientsUsed.isEmpty())
                 completeRecipes.add(recipe);
             else

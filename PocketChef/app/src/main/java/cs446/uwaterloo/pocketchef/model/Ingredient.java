@@ -5,8 +5,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 public class Ingredient implements Parcelable {
@@ -15,9 +16,12 @@ public class Ingredient implements Parcelable {
     private Date expirationDate;
 
     public Ingredient(String newName) {
+        this(newName, null);
+    }
 
+    public Ingredient(String newName, Date date) {
         this.name = newName;
-
+        this.expirationDate = date;
     }
 
     @NonNull
@@ -30,19 +34,33 @@ public class Ingredient implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ingredient that = (Ingredient) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(expirationDate, that.expirationDate);
+        return Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, expirationDate);
+        return Objects.hash(name);
     }
 
     public void setExpirationDate(Date newExpirationDate) {
 
         this.expirationDate = newExpirationDate;
 
+    }
+
+    /**
+     * set a random expiration date for the demo
+     */
+    public void setRandomExpirationDate() {
+        Calendar calendar = Calendar.getInstance();
+
+        // set expiration date to 14 days in the future
+        // with +-5 days of variability
+        int day = calendar.get(Calendar.DATE);
+        int offset = (int) (5 * 2 * (Math.random() - 0.5));
+        int final_date = calendar.get(Calendar.DATE) + 14 + offset;
+        calendar.set(Calendar.DATE, final_date);
+        this.expirationDate = calendar.getTime();
     }
 
     public String getName() {
@@ -60,7 +78,7 @@ public class Ingredient implements Parcelable {
     //Method to quickly create a sample list of ingredients for testing purposes
     public static ArrayList<Ingredient> createIngredientsList() {
 
-        ArrayList<Ingredient> result = new ArrayList<Ingredient>();
+        ArrayList<Ingredient> result = new ArrayList<>();
         result.add(new Ingredient("Tomatoes"));
         result.add(new Ingredient("Cheese"));
         result.add(new Ingredient("Potatoes"));
@@ -80,6 +98,9 @@ public class Ingredient implements Parcelable {
         result.add(new Ingredient("Triple Sec"));
         result.add(new Ingredient("Lime juice"));
 
+        for (Ingredient ingredient : result) {
+            ingredient.setRandomExpirationDate();
+        }
         return result;
 
     }
@@ -117,9 +138,9 @@ public class Ingredient implements Parcelable {
     // Ingredient constructor with Parcel parameter
     private Ingredient(Parcel in) {
         name = in.readString();
-        Long dateValue = in.readLong();
+        long dateValue = in.readLong();
         if (dateValue != Long.MIN_VALUE) {
-            expirationDate = new Date(in.readLong());
+            expirationDate = new Date(dateValue);
         }
     }
     /* Code for implementing Parcelable ends here */
