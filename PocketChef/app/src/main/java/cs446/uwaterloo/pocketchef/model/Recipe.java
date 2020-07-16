@@ -107,6 +107,11 @@ public class Recipe implements Parcelable {
         recipes.add(new Recipe("Grilled Cheese",
                 Arrays.asList(new Ingredient("Cheese"), new Ingredient("Bread")),
                 Arrays.asList("a", "b", "c")));
+        for (Recipe r : recipes) {
+            for (Ingredient i : r.ingredients) {
+                i.setRandomExpirationDate();
+            }
+        }
         return recipes;
     }
 

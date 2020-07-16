@@ -5,8 +5,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 public class Ingredient implements Parcelable {
@@ -15,9 +16,12 @@ public class Ingredient implements Parcelable {
     private Date expirationDate;
 
     public Ingredient(String newName) {
+        this(newName, null);
+    }
 
+    public Ingredient(String newName, Date date) {
         this.name = newName;
-
+        this.expirationDate = date;
     }
 
     @NonNull
@@ -42,6 +46,21 @@ public class Ingredient implements Parcelable {
 
         this.expirationDate = newExpirationDate;
 
+    }
+
+    /**
+     * set a random expiration date for the demo
+     */
+    public void setRandomExpirationDate() {
+        Calendar calendar = Calendar.getInstance();
+
+        // set expiration date to 14 days in the future
+        // with +-5 days of variability
+        int day = calendar.get(Calendar.DATE);
+        int offset = (int) (5 * 2 * (Math.random() - 0.5));
+        int final_date = calendar.get(Calendar.DATE) + 14 + offset;
+        calendar.set(Calendar.DATE, final_date);
+        this.expirationDate = calendar.getTime();
     }
 
     public String getName() {
@@ -79,6 +98,9 @@ public class Ingredient implements Parcelable {
         result.add(new Ingredient("Triple Sec"));
         result.add(new Ingredient("Lime juice"));
 
+        for (Ingredient ingredient : result) {
+            ingredient.setRandomExpirationDate();
+        }
         return result;
 
     }
