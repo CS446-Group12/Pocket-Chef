@@ -1,20 +1,18 @@
 package cs446.uwaterloo.pocketchef.ui.cooking;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import cs446.uwaterloo.pocketchef.CookingActivity;
-import cs446.uwaterloo.pocketchef.MainActivity;
 import cs446.uwaterloo.pocketchef.R;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
 import cs446.uwaterloo.pocketchef.model.Recipe;
@@ -92,6 +90,7 @@ public class CookingFragment extends Fragment {
         int counter = 1;
         for (String s : recipe.getSteps()) {
             rtnStr += "Step " + counter + ": " + s + "\n\n";
+            counter += 1;
         }
         return rtnStr;
     }
