@@ -114,5 +114,5 @@
     </string>
     <string name="title_activity_cooking">CookingActivity</string>
     <string name="tab_text_1">Ingredients</string>
-    <string name="tab_text_2">Recipe</string>
+    <string name="tab_text_2">Steps</string>
 </resources>

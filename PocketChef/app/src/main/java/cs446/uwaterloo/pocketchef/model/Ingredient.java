@@ -1,12 +1,15 @@
 package cs446.uwaterloo.pocketchef.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Ingredient {
+public class Ingredient implements Parcelable {
 
     private String name;
     private Date expirationDate;
@@ -81,4 +84,43 @@ public class Ingredient {
 
     }
 
+    /* Code for implementing Parcelable starts here */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    // Write object data to parcel
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(name);
+
+        if (expirationDate != null) {
+            out.writeLong(expirationDate.getTime());
+        } else {
+            out.writeLong(Long.MIN_VALUE);
+        }
+    }
+
+    // Used to regenerate object. All Parcelables must have a CREATOR that implements these two methods
+    public static final Parcelable.Creator<Ingredient> CREATOR
+            = new Parcelable.Creator<Ingredient>() {
+        public Ingredient createFromParcel(Parcel in) {
+            return new Ingredient(in);
+        }
+
+        public Ingredient[] newArray(int size) {
+            return new Ingredient[size];
+        }
+    };
+
+    // Ingredient constructor with Parcel parameter
+    private Ingredient(Parcel in) {
+        name = in.readString();
+        Long dateValue = in.readLong();
+        if (dateValue != Long.MIN_VALUE) {
+            expirationDate = new Date(in.readLong());
+        }
+    }
+    /* Code for implementing Parcelable ends here */
 }
