@@ -10,9 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
-public class Ingredient implements Parcelable {
-
-    private String name;
+public class Ingredient extends BaseModel implements Parcelable {
     private Date expirationDate;
 
     public Ingredient(String newName) {
@@ -20,7 +18,7 @@ public class Ingredient implements Parcelable {
     }
 
     public Ingredient(String newName, Date date) {
-        this.name = newName;
+        super(newName);
         this.expirationDate = date;
     }
 
@@ -61,12 +59,6 @@ public class Ingredient implements Parcelable {
         int final_date = calendar.get(Calendar.DATE) + 14 + offset;
         calendar.set(Calendar.DATE, final_date);
         this.expirationDate = calendar.getTime();
-    }
-
-    public String getName() {
-
-        return this.name;
-
     }
 
     public Date getExpirationDate() {
@@ -137,7 +129,7 @@ public class Ingredient implements Parcelable {
 
     // Ingredient constructor with Parcel parameter
     private Ingredient(Parcel in) {
-        name = in.readString();
+        super(in.readString());
         long dateValue = in.readLong();
         if (dateValue != Long.MIN_VALUE) {
             expirationDate = new Date(dateValue);

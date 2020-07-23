@@ -47,8 +47,8 @@ public class PantryFragment extends Fragment {
         pantryView.addItemDecoration(itemDecoration);
 
         // Pair the adapter and the data source
-        adapter = new IngredientAdapter(IngredientData.getCurrentIngredients());
-        IngredientData.setAdapter(adapter);
+        adapter = new IngredientAdapter();
+        IngredientData.manager.setAdapter(adapter);
 
         //Attach the adapter to the RecyclerView
         pantryView.setAdapter(adapter);
@@ -72,6 +72,19 @@ public class PantryFragment extends Fragment {
         MenuItem item = menu.findItem(R.id.app_bar_search);
         final SearchView searchView = (SearchView) item.getActionView();
         //Now, look up the id of the text input field in the widget and obtain it
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                IngredientData.manager.filterByName(newText);
+                return false;
+            }
+        });
+
         int searchEditId = androidx.appcompat.R.id.search_src_text;
         EditText et = (EditText) searchView.findViewById(searchEditId);
         //Set the background color of the input field
@@ -110,7 +123,7 @@ public class PantryFragment extends Fragment {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(datePicker.getYear(),datePicker.getMonth(),datePicker.getDayOfMonth());
                 Ingredient newIngredient = new Ingredient(nameEditText.getText().toString(), calendar.getTime());
-                IngredientData.addIngredients(true, newIngredient);
+                IngredientData.manager.addIngredients(newIngredient);
             }
         });
 
