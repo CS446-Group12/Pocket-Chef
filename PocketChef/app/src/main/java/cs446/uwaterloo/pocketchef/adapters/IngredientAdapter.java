@@ -19,15 +19,7 @@ import cs446.uwaterloo.pocketchef.model.Ingredient;
 
 public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.ViewHolder>{
 
-    private List<Ingredient> mIngredients;
-
-    public IngredientAdapter(List<Ingredient> ingredients) {
-        this.mIngredients = ingredients;
-    }
-
-    public void updateIngredients(List<Ingredient> ingredients) {
-        this.mIngredients = ingredients;
-    }
+    public IngredientAdapter() {}
 
     @NonNull
     @Override
@@ -50,7 +42,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
     public void onBindViewHolder(IngredientAdapter.ViewHolder holder, int position) {
 
         // Get the data model based on position
-        final Ingredient ingredient = mIngredients.get(position);
+        final Ingredient ingredient = IngredientData.manager.getDisplayIngredients().get(position);
 
         // Set item views based on your views and data model
         TextView textView = holder.ingredientTextView;
@@ -58,7 +50,9 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
 
         TextView dateView = holder.ingredientDateView;
         if (ingredient.getExpirationDate() != null) {
-            dateView.setText(dateView.getContext().getString(R.string.ingredient_expiration_date, SimpleDateFormat.getDateInstance().format(ingredient.getExpirationDate())));
+            dateView.setText(dateView.getContext().getString(
+                    R.string.ingredient_expiration_date,
+                    SimpleDateFormat.getDateInstance().format(ingredient.getExpirationDate())));
         } else {
             dateView.setVisibility(View.INVISIBLE);
         }
@@ -68,14 +62,14 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IngredientData.removeIngredients(ingredient);
+                IngredientData.manager.removeIngredients(ingredient);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mIngredients.size();
+        return IngredientData.manager.getDisplayIngredients().size();
     }
 
     // Provide a direct reference to each of the views within a data item

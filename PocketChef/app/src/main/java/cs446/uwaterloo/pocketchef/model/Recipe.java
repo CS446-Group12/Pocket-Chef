@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 // Parcelable is similar to Java's Serializable. It is more efficient but requires a bit more code
-public class Recipe implements Parcelable {
-    private String name;
+public class Recipe extends BaseModel implements Parcelable {
     private HashSet<Ingredient> ingredients;
     private Rating rating;
     private ArrayList<String> steps;
@@ -25,13 +24,13 @@ public class Recipe implements Parcelable {
     }
 
     public Recipe(String name, List<Ingredient> ingredients) {
-        this.name = name;
+        super(name);
         this.ingredients = new HashSet<>(ingredients);
         this.steps = new ArrayList<>();
     }
 
     public Recipe(String name, List<Ingredient> ingredients, List<String> steps) {
-        this.name = name;
+        super(name);
         this.ingredients = new HashSet<>(ingredients);
         this.steps = new ArrayList<>(steps);
     }
@@ -59,10 +58,6 @@ public class Recipe implements Parcelable {
 
     public HashSet<Ingredient> getAllIngredients() {
         return ingredients;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Rating getRating() {
@@ -148,7 +143,7 @@ public class Recipe implements Parcelable {
 
     // Recipe constructor with Parcel parameter
     private Recipe(Parcel in) {
-        name = in.readString();
+        super(in.readString());
         ingredients = new HashSet<>(in.createTypedArrayList(Ingredient.CREATOR));
         String ratingValue = in.readString();
         if (ratingValue != null && !ratingValue.isEmpty()) {

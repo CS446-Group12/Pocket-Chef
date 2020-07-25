@@ -39,7 +39,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             public void onClick(final View v) {
                 RecyclerView recyclerView = (RecyclerView) v.getParent();
                 int position = recyclerView.getChildLayoutPosition(v);
-                Recipe recipe = RecipeData.getCurrentRecipes().get(position);
+                Recipe recipe = RecipeData.manager.getDisplayRecipes().get(position);
 
                 ((MainActivity)context).displayRecipeContents(recipe);
             }
@@ -51,7 +51,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        List<Recipe> recipes = RecipeData.getCurrentRecipes();
+        List<Recipe> recipes = RecipeData.manager.getDisplayRecipes();
         Recipe recipe = recipes.get(position);
 
         TextView textView = holder.recipeTextView;
@@ -61,7 +61,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     }
 
     @Override
-    public int getItemCount() { return RecipeData.getCurrentRecipes().size(); }
+    public int getItemCount() { return RecipeData.manager.getDisplayRecipes().size(); }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView recipeTextView;
