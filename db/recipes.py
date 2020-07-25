@@ -16,7 +16,7 @@ class recipe:
         self.sodium = sodium
 
 def get_recipes():
-    with open('full_format_recipes.json') as json_file:
+    with open('db/full_format_recipes.json') as json_file:
         data = json.load(json_file)
         recipes = []
         for p in data:

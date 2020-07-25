@@ -1,11 +1,31 @@
 import recipes
 import sqlite3
+import clean_ingredients
 
 all_recipes = recipes.get_recipes()
 
 def get_first(result):
     for r in result:
         return r[0]
+
+def insert_ingredients(conn):
+    def insert_ingredient(ingred):
+        sql = "insert into INGREDIENT(name) values (?)"
+        conn.execute(sql, (ingred,))
+
+    for ingred in clean_ingredients.ingreds:
+        insert_ingredient(ingred)
+
+def insert_recipe_ingreds(conn, recipe, recipe_id):
+    def insert_recipe_ingred(recipe_id, ingred):
+        sql = "select ID from ingredient where name=?"
+        ingred_id = get_first(conn.execute(sql, (ingred,)))
+        sql = "insert or ignore into recipe_ingredient values(?,?)"
+        conn.execute(sql, (recipe_id, ingred_id))
+    
+    ingreds = clean_ingredients.desc_to_ingreds(recipe)
+    for ingred in ingreds:
+        insert_recipe_ingred(recipe_id, ingred)
 
 def insert_recipe_categories(conn, recipe, recipe_id):
     def insert_recipe_category(recipe_id, category):
@@ -34,11 +54,13 @@ def insert_recipes(conn):
     for rid, recipe in enumerate(all_recipes):
         insert_recipe(recipe)
         insert_recipe_categories(conn, recipe, rid + 1) # database is 1-indexed (not 0-indexed)
+        insert_recipe_ingreds(conn, recipe, rid + 1)
 
 def run():
     conn = sqlite3.connect('/Users/gill/Downloads/ece452proj/recipes.db')
-    conn.executescript(open("queries.sql").read())
+    conn.executescript(open("db/tables.sql").read())
     insert_categories(conn)
+    insert_ingredients(conn)
     insert_recipes(conn)
     conn.commit()
 
