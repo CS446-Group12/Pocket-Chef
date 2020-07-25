@@ -57,7 +57,7 @@ def insert_recipes(conn):
         insert_recipe_ingreds(conn, recipe, rid + 1)
 
 def run():
-    conn = sqlite3.connect('/Users/gill/Downloads/ece452proj/recipes.db')
+    conn = sqlite3.connect('/Users/gill/Desktop/App/db/recipes.db')
     conn.executescript(open("db/tables.sql").read())
     insert_categories(conn)
     insert_ingredients(conn)
