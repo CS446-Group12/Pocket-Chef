@@ -37,8 +37,8 @@ CREATE TABLE INGREDIENT(
 );
 
 CREATE TABLE RECIPE_INGREDIENT(
-   ingredient_id INTEGER NOT NULL,
    recipe_id INTEGER NOT NULL,
+   ingredient_id INTEGER NOT NULL,
    PRIMARY KEY (recipe_id, ingredient_id),
    FOREIGN KEY (recipe_id) REFERENCES RECIPE (ID), 
 	FOREIGN KEY (ingredient_id) REFERENCES INGREDIENT (ID)

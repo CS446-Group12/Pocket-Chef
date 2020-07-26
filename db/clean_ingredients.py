@@ -22,7 +22,3 @@ def desc_to_ingreds(recipe):
    return [x for x in recipe.ingredients_str.split() if x in ingreds] 
    
 ingreds = filter(get_dict(all_recipes))
-
-
-
-

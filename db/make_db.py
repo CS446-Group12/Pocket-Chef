@@ -55,6 +55,7 @@ def insert_recipes(conn):
         insert_recipe(recipe)
         insert_recipe_categories(conn, recipe, rid + 1) # database is 1-indexed (not 0-indexed)
         insert_recipe_ingreds(conn, recipe, rid + 1)
+        if rid == 10: return # for debugging
 
 def run():
     conn = sqlite3.connect('/Users/gill/Desktop/App/db/recipes.db')
