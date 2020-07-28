@@ -3,29 +3,37 @@ package cs446.uwaterloo.pocketchef.ui.pantry;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.Calendar;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.List;
 
 import cs446.uwaterloo.pocketchef.R;
 import cs446.uwaterloo.pocketchef.adapters.IngredientAdapter;
-import cs446.uwaterloo.pocketchef.data.IngredientData;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
 
 public class PantryFragment extends Fragment {
@@ -34,28 +42,67 @@ public class PantryFragment extends Fragment {
     private Toolbar toolbar;
     private IngredientAdapter adapter;
 
+    private PantryViewModel pantryViewModel;
+
+    private Handler handler;
+
+    private ArrayAdapter<String> ingredientNameSuggestionAdapter;
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_pantry, container, false);
 
+        Context context = getActivity();
+
         //Set up the RecyclerView to be used for displaying the list
         //Look up in the parent activity layout the recycler view that will list the ingredients
         pantryView = root.findViewById(R.id.pantry_view);
         RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this.getContext(), DividerItemDecoration.VERTICAL);
+                DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         pantryView.addItemDecoration(itemDecoration);
 
+
+        // get an existing ViewModel or create one if they don't exist
+        pantryViewModel = new ViewModelProvider(this).get(PantryViewModel.class);
+
+        // TODO add a loading screen before this is ready since it looks like broken
+        // observe changes in ingredients available to the user
+        pantryViewModel.getAvailableIngredients().observe(getViewLifecycleOwner(), new Observer<List<Ingredient>>() {
+            @Override
+            public void onChanged(List<Ingredient> ingredients) {
+                adapter.setAvailableIngredients(ingredients);
+            }
+        });
+
         // Pair the adapter and the data source
-        adapter = new IngredientAdapter();
-        IngredientData.manager.setAdapter(adapter);
+        adapter = new IngredientAdapter(this);
 
         //Attach the adapter to the RecyclerView
         pantryView.setAdapter(adapter);
         //Set layout manager to position the items
-        pantryView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        pantryView.setLayoutManager(new LinearLayoutManager(context));
+
+        // make an adapter for adding ingredients
+        ingredientNameSuggestionAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line);
+
+        // update the data automatically for names
+        pantryViewModel.getAllIngredients().observe(getViewLifecycleOwner(), new Observer<List<Ingredient>>() {
+            @Override
+            public void onChanged(final List<Ingredient> ingredients) {
+                Log.d("Pantry", "Got " + ingredients.size() + " ingredients in total.");
+                ingredientNameSuggestionAdapter.clear();
+                for (Ingredient i : ingredients) {
+                    ingredientNameSuggestionAdapter.add(i.name);
+                }
+                ingredientNameSuggestionAdapter.notifyDataSetChanged();
+            }
+        });
 
         setHasOptionsMenu(true);
+
+        // utility for running code on UI thread (i.e. show toast)
+        handler = new Handler();
 
         return root;
 
@@ -80,7 +127,16 @@ public class PantryFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                IngredientData.manager.filterByName(newText);
+                pantryViewModel.filterAvailableIngredients(newText).observe(
+                        getViewLifecycleOwner(),
+                        new Observer<List<Ingredient>>() {
+                            @Override
+                            public void onChanged(List<Ingredient> ingredients) {
+                                adapter.setAvailableIngredients(ingredients);
+                                Log.d("Pantry", "Got " + ingredients.size() + " filtered ingredients!");
+                            }
+                        }
+                );
                 return false;
             }
         });
@@ -104,26 +160,58 @@ public class PantryFragment extends Fragment {
 
     private void addIngredient() {
 
-        Context context = getContext();
+        final Context context = getContext();
 
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
         alertBuilder.setTitle("Add ingredient");
 
         final View view = View.inflate(context, R.layout.add_ingredient, null);
 
-        final EditText nameEditText = view.findViewById(R.id.add_ingredient_name);
-        final DatePicker datePicker = view.findViewById(R.id.add_ingredient_date);
-        datePicker.setMinDate(System.currentTimeMillis());
+        final AppCompatAutoCompleteTextView nameEditText = view.findViewById(R.id.add_ingredient_name);
+        final EditText amountEditText = view.findViewById(R.id.add_ingredient_amount);
+        final TextInputLayout amountTil = view.findViewById(R.id.add_ingredient_amount_til);
+        nameEditText.setAdapter(ingredientNameSuggestionAdapter);
 
         alertBuilder.setView(view);
 
         alertBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(datePicker.getYear(),datePicker.getMonth(),datePicker.getDayOfMonth());
-                Ingredient newIngredient = new Ingredient(nameEditText.getText().toString(), calendar.getTime());
-                IngredientData.manager.addIngredients(newIngredient);
+            public void onClick(final DialogInterface dialog, int which) {
+                final int selected = nameEditText.getListSelection();
+                // This needs to be on a background thread since it queries the DB
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO more input validation
+                        Ingredient ingredient;
+                        if (selected != ListView.INVALID_POSITION) {
+                            ingredient = (Ingredient) nameEditText.getAdapter().getItem(selected);
+                        } else {
+                            ingredient = pantryViewModel.findIngredientByName(nameEditText.getText().toString());
+                            if (ingredient == null) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getActivity(), "Couldn't find " + nameEditText.getText(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                return;
+                            }
+                        }
+
+                        ingredient.stock = Double.parseDouble(amountEditText.getText().toString());
+                        pantryViewModel.updateIngredient(ingredient);
+
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), "Added " + nameEditText.getText(), Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                }).start();
+
             }
         });
 
@@ -137,4 +225,8 @@ public class PantryFragment extends Fragment {
         alertBuilder.show();
     }
 
+    public void deleteIngredient(Ingredient ingredient) {
+        ingredient.stock = 0;
+        pantryViewModel.updateIngredient(ingredient);
+    }
 }

@@ -1,40 +1,54 @@
 package cs446.uwaterloo.pocketchef.ui.cooking;
 
-import android.content.Intent;
+import android.app.Application;
 
-import androidx.arch.core.util.Function;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
-import cs446.uwaterloo.pocketchef.R;
+import cs446.uwaterloo.pocketchef.data.CookingDatabase;
+import cs446.uwaterloo.pocketchef.data.RecipeDao;
 import cs446.uwaterloo.pocketchef.model.Recipe;
 
-public class CookingViewModel extends ViewModel {
+public class CookingViewModel extends AndroidViewModel {
 
-    //private MutableLiveData<Integer> mIndex = new MutableLiveData<>();
-    private MutableLiveData<String> mData = new MutableLiveData<>();
+    private MutableLiveData<String> mainText = new MutableLiveData<>();
 
-    private LiveData<String> mText = Transformations.map(mData, new Function<String, String>() {
-        @Override
-        public String apply(String input) {
-            return input;
-        }
-    });
+    private CookingDatabase db;
 
-//    public void setIndex(int index) {
-//        mIndex.setValue(index);
-//    }
+    private RecipeDao recipeDao;
 
-    public LiveData<String> getText() {
-        return mText;
+    public CookingViewModel(@NonNull Application application) {
+        super(application);
+        db = CookingDatabase.getDatabase(application.getApplicationContext());
+        recipeDao = db.recipeDao();
     }
 
-    public void setData(String data) {
-        this.mData.setValue(data);
+
+    public LiveData<String> getMainText() {
+        return mainText;
     }
+
+    public void setMainText(String text) {
+        this.mainText.setValue(text);
+    }
+
+    private LiveData<Recipe> recipe = new MediatorLiveData<>();
+
+    public LiveData<Recipe> getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(final Recipe recipe) {
+        CookingDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                recipeDao.updateRecipes(recipe);
+            }
+        });
+        this.recipe = recipeDao.getRecipeById(recipe.ID);
+    }
+
 }

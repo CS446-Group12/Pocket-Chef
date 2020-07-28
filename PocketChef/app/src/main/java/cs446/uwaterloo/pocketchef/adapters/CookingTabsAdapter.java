@@ -22,7 +22,7 @@ public class CookingTabsAdapter extends FragmentPagerAdapter {
     private final Context mContext;
 
     public CookingTabsAdapter(Context context, FragmentManager fm) {
-        super(fm);
+        super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mContext = context;
     }
 

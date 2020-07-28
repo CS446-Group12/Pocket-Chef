@@ -40,7 +40,8 @@
                 android:minWidth="20dip"
                 android:minHeight="20dip"
                 android:numStars="5"
-                android:paddingTop="@dimen/appbar_padding_top" />
+                android:paddingTop="@dimen/appbar_padding_top"
+                android:stepSize=".5" />
 
         </LinearLayout>
 
