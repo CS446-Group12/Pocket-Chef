@@ -3,17 +3,17 @@ import json
 class recipe:
     def __init__(self, directions, fat, categories, calories, desc, protein, rating, title, ingredients, sodium):
         self.directions = directions
-        self.directions_str = '\n'.join(directions)
-        self.fat = fat
+        self.directions_str = '\0'.join(directions)
+        self.fat = int(fat) if fat else None
         self.categories = categories
-        self.calories = calories
+        self.calories = int(calories) if calories else None
         self.desc = desc
-        self.protein = protein
-        self.rating = rating
+        self.protein = int(protein) if protein else None
+        self.rating = rating if rating else None
         self.title = title
         self.ingredients = ingredients
-        self.ingredients_str = '\n'.join(ingredients)
-        self.sodium = sodium
+        self.ingredients_str = '\0'.join(ingredients)
+        self.sodium = int(sodium) if sodium else None
 
 def get_recipes():
     with open('db/full_format_recipes.json') as json_file:
