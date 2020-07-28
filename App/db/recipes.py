@@ -12,19 +12,18 @@ class recipe:
         self.rating = rating if rating else None
         self.title = title
         self.ingredients = ingredients
-        self.ingredient_ids = ingredient_ids
+        self.ingredients_ids = ingredients_ids
         self.ingredients_str = '\0'.join(ingredients)
         self.sodium = int(sodium) if sodium else None
 
 def get_recipes():
-    with open('db/data/recipes.json') as json_file:
+    with open('db/alternatives/recipes.json') as json_file:
         data = json.load(json_file)
         recipes = []
         for p in data:
             if not p: continue
             r = recipe(p['directions'], p['fat'], p['categories'], p['calories'], p['desc'], p['protein'], p['rating'], p['title'], p['ingredients'], p['sodium'], p['ingredient_ids'])
             recipes.append(r)
-
     return recipes
 
 def get_categories(recipes):
@@ -33,3 +32,5 @@ def get_categories(recipes):
         for categ in r.categories:
             categories.add(categ)
     return list(categories)
+
+get_recipes()
