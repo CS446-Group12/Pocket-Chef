@@ -66,7 +66,7 @@ def run():
     # No need for sampling or to clear DB because 
     # database population is much faster now (10 seconds) due to ID insertion.
 
-    dbpath = 'src/main/assets/recipes.db'
+    dbpath = 'PocketChef/app/src/main/assets/recipes.db'
     conn = sqlite3.connect(dbpath)
     
     conn.executescript(open("db/queries/tables.sql").read())
