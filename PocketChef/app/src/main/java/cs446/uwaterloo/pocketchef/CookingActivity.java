@@ -14,9 +14,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import cs446.uwaterloo.pocketchef.adapters.CookingTabsAdapter;
 import cs446.uwaterloo.pocketchef.model.Recipe;
 import cs446.uwaterloo.pocketchef.ui.cooking.CookingViewModel;
@@ -58,11 +55,11 @@ public class CookingActivity extends AppCompatActivity {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 recipe.rating = rating;
-                cookingViewModel.setRecipe(recipe);
+                cookingViewModel.updateAndSetRecipe(recipe);
             }
         });
 
-        cookingViewModel.setRecipe(recipe);
+        cookingViewModel.updateAndSetRecipe(recipe);
 
         TextView recipeName = findViewById(R.id.recipe_name);
         recipeName.setText(recipe.title);
@@ -76,10 +73,7 @@ public class CookingActivity extends AppCompatActivity {
     public void openIngredientManager(View view) {
         //setContentView(R.layout.fragment_ingredient_usage);
 
-        // Get list of Ingredients
-        ArrayList<String> ingredients = new ArrayList<String>(Arrays.asList(recipe.getIngredients()));
-
-        DialogFragment dialogFragment = new IngredientUsageFragment(ingredients);
+        DialogFragment dialogFragment = new IngredientUsageFragment(recipe);
         dialogFragment.show(getSupportFragmentManager(), "ingredientDialog");
     }
 }

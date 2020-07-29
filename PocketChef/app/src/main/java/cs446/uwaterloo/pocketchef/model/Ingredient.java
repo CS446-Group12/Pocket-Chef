@@ -23,4 +23,14 @@ public class Ingredient {
         this.name = name;
         this.stock = stock;
     }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Ingredient{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", stock=" + stock +
+                '}';
+    }
 }

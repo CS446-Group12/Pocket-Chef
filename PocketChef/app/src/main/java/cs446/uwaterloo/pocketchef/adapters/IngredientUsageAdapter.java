@@ -6,26 +6,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
 
 import cs446.uwaterloo.pocketchef.R;
-import cs446.uwaterloo.pocketchef.data.IngredientData;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
 
-public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsageAdapter.ViewHolder>{
+public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsageAdapter.ViewHolder> {
 
-    private ArrayList<Ingredient> ingredients;
+    private static final double STEP_SIZE = 0.5;
+    private List<Ingredient> ingredients;
 
-    public IngredientUsageAdapter(ArrayList<Ingredient> ingredients) {
-        this.ingredients = ingredients;
+    private static NumberFormat formatter = NumberFormat.getNumberInstance();
+
+    public IngredientUsageAdapter() {
+        this.ingredients = new ArrayList<>();
     }
 
     // Inflates item layout and creates holder
@@ -49,31 +51,29 @@ public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsage
         final Ingredient ingredient = ingredients.get(position);
 
         // Set item views based on your views and data model
-        TextView ingredientNameView = holder.ingredientNameView;
-        ingredientNameView.setText(ingredient.getName());
+        final TextView ingredientNameView = holder.ingredientNameView;
+        ingredientNameView.setText(ingredient.name);
 
         final EditText ingredientQuantityView = holder.ingredientQuantityView;
-        ingredientQuantityView.setText("0");
+        ingredientQuantityView.setText(formatter.format(ingredient.stock));
 
         Button subtractButton = holder.subtractButton;
         subtractButton.setText("-");
         subtractButton.setEnabled(true);
-        subtractButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+        subtractButton.setOnClickListener(new IngredientAmountChangeListener(
+                IngredientAmountChangeListener.Mode.SUBTRACT,
+                ingredientQuantityView,
+                ingredient
+        ));
 
         Button addButton = holder.addButton;
         addButton.setText("+");
         addButton.setEnabled(true);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+        addButton.setOnClickListener(new IngredientAmountChangeListener(
+                IngredientAmountChangeListener.Mode.ADD,
+                ingredientQuantityView,
+                ingredient
+        ));
     }
 
     @Override
@@ -101,6 +101,58 @@ public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsage
             subtractButton = (Button) itemView.findViewById(R.id.subtract_button);
             ingredientQuantityView = (EditText) itemView.findViewById(R.id.ingredient_quantity);
             addButton = (Button) itemView.findViewById(R.id.add_button);
+        }
+    }
+
+    public void setIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+        notifyDataSetChanged();
+    }
+
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    private static class IngredientAmountChangeListener implements View.OnClickListener {
+
+        public enum Mode {
+            SUBTRACT,
+            ADD
+        }
+
+        private Mode mode;
+        private EditText ingredientQuantityView;
+        private Ingredient ingredient;
+
+        public IngredientAmountChangeListener(Mode mode, EditText ingredientQuantityView, Ingredient ingredient) {
+            this.mode = mode;
+            this.ingredientQuantityView = ingredientQuantityView;
+            this.ingredient = ingredient;
+        }
+
+        @Override
+        public void onClick(View view) {
+            double value;
+            try {
+                value = Double.parseDouble(ingredientQuantityView.getText().toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            switch (mode) {
+                case ADD:
+                    value += STEP_SIZE;
+                    break;
+                case SUBTRACT:
+                    if (value > STEP_SIZE) {
+                        value -= STEP_SIZE;
+                    }
+            }
+
+            ingredient.stock = value;
+
+            ingredientQuantityView.setText(formatter.format(value));
         }
     }
 }

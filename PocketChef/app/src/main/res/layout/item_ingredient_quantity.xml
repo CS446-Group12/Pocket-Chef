@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ingredient_quantity_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,9 +10,8 @@
         android:id="@+id/ingredient_name"
         android:layout_width="189dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:layout_weight="1"
-        android:text="TextView"
         android:textSize="18sp" />
 
     <Button
@@ -29,10 +27,10 @@
         android:layout_width="109dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:digits="true"
         android:ems="10"
         android:inputType="numberDecimal"
         android:selectAllOnFocus="true"
+        android:singleLine="true"
         android:textAlignment="center"
         android:textSize="18sp" />
 
