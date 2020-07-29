@@ -56,7 +56,19 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
 
         // Set item views based on your views and data model
         TextView textView = holder.ingredientTextView;
-        textView.setText(ingredient.name);
+        StringBuilder titleCaseName = new StringBuilder();
+        for (String word : ingredient.name.split("\\s+")) {
+            if (word.isEmpty())
+                continue;
+            else if (word.length() == 1)
+                titleCaseName.append(word.toUpperCase());
+            else {
+                word = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+                titleCaseName.append(word);
+            }
+            titleCaseName.append(" ");
+        }
+        textView.setText(titleCaseName.toString());
 
         final String stock_template = "Current stock: %s";
         int int_stock = (int) ingredient.stock;
