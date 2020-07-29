@@ -2,9 +2,12 @@ package cs446.uwaterloo.pocketchef;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
@@ -14,6 +17,7 @@ import com.google.android.material.tabs.TabLayout;
 import cs446.uwaterloo.pocketchef.adapters.CookingTabsAdapter;
 import cs446.uwaterloo.pocketchef.model.Recipe;
 import cs446.uwaterloo.pocketchef.ui.cooking.CookingViewModel;
+import cs446.uwaterloo.pocketchef.ui.cooking.IngredientUsageFragment;
 
 public class CookingActivity extends AppCompatActivity {
 
@@ -51,15 +55,25 @@ public class CookingActivity extends AppCompatActivity {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 recipe.rating = rating;
-                cookingViewModel.setRecipe(recipe);
+                cookingViewModel.updateAndSetRecipe(recipe);
             }
         });
 
-        cookingViewModel.setRecipe(recipe);
-    }
+        cookingViewModel.updateAndSetRecipe(recipe);
 
+        TextView recipeName = findViewById(R.id.recipe_name);
+        recipeName.setText(recipe.title);
+    }
 
     public Recipe getRecipe() {
         return recipe;
+    }
+
+    // Called when the user clicks the "Consume Ingredients" button
+    public void openIngredientManager(View view) {
+        //setContentView(R.layout.fragment_ingredient_usage);
+
+        DialogFragment dialogFragment = new IngredientUsageFragment(recipe);
+        dialogFragment.show(getSupportFragmentManager(), "ingredientDialog");
     }
 }

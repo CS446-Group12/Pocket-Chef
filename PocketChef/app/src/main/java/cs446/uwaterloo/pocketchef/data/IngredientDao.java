@@ -2,9 +2,9 @@ package cs446.uwaterloo.pocketchef.data;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public interface IngredientDao {
     @Query("SELECT * FROM INGREDIENT WHERE stock > 0 AND NAME LIKE :namePattern")
     LiveData<List<Ingredient>> getAvailableIngredients(String namePattern);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateIngredient(Ingredient ingredient);
 
     @Query("SELECT * FROM INGREDIENT")

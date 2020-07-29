@@ -7,10 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import cs446.uwaterloo.pocketchef.CookingActivity;
 import cs446.uwaterloo.pocketchef.R;
@@ -23,7 +20,11 @@ public class CookingFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
+    private static final int INGREDIENTS_INDEX = 1;
+    private static final int RECIPE_INDEX = 2;
+
     private CookingViewModel cookingViewModel;
+    private int index;
 
     public static CookingFragment newInstance(int index) {
         CookingFragment fragment = new CookingFragment();
@@ -36,23 +37,12 @@ public class CookingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Get Recipe from CookingActivity
-        CookingActivity cookingActivity = (CookingActivity) getActivity();
-        assert cookingActivity != null;
-        Recipe recipe = cookingActivity.getRecipe();
 
         int index = 1;
         if (getArguments() != null) {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
         }
-
-        cookingViewModel = new ViewModelProvider(this).get(CookingViewModel.class);
-
-        if (index == 1) {
-            cookingViewModel.setMainText(prettyPrintIngredients(recipe));
-        } else if (index == 2) {
-            cookingViewModel.setMainText(prettyPrintSteps(recipe));
-        }
+        this.index = index;
     }
 
     @Override
@@ -61,12 +51,25 @@ public class CookingFragment extends Fragment {
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_cooking, container, false);
         final TextView textView = root.findViewById(R.id.section_label);
-        cookingViewModel.getMainText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+
+        // Get Recipe from CookingActivity
+        CookingActivity cookingActivity = (CookingActivity) getActivity();
+        assert cookingActivity != null;
+        Recipe recipe = cookingActivity.getRecipe();
+
+        String text;
+        switch (index) {
+            case INGREDIENTS_INDEX:
+                text = prettyPrintIngredients(recipe);
+                break;
+            case RECIPE_INDEX:
+                text = prettyPrintSteps(recipe);
+                break;
+            default:
+                throw new RuntimeException("invalid page index!");
+        }
+
+        textView.setText(text);
 
         return root;
     }
