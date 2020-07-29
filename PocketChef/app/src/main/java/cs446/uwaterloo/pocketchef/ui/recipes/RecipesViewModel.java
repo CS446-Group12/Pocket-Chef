@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-import java.util.HashSet;
 import java.util.List;
 
 import cs446.uwaterloo.pocketchef.data.CookingDatabase;
@@ -27,18 +26,13 @@ public class RecipesViewModel extends AndroidViewModel {
     private RecipeDao recipeDao;
     private IngredientDao ingredientDao;
 
-    private HashSet<Integer> availableIngredientIds;
-    private LiveData<List<RecipeAndCounts>> availableRecipes;
+    private LiveData<List<RecipeAndCounts>> availableRecipes = null;
 
     private LiveData<List<RecipeAndCounts>> allRecipes;
 
     private Observer<List<Ingredient>> ingredientObserver = new Observer<List<Ingredient>>() {
         @Override
         public void onChanged(List<Ingredient> ingredients) {
-            availableIngredientIds.clear();
-            for (Ingredient ingredient : ingredients) {
-                availableIngredientIds.add(ingredient.id);
-            }
             // refresh the available recipes
             getAvailableRecipes(true);
             getAllRecipes(true);
@@ -51,8 +45,6 @@ public class RecipesViewModel extends AndroidViewModel {
         recipeDao = db.recipeDao();
         ingredientDao = db.ingredientDao();
 
-        availableIngredientIds = new HashSet<>();
-
         ingredientDao.getAvailableIngredients().observeForever(ingredientObserver);
     }
 
@@ -62,7 +54,7 @@ public class RecipesViewModel extends AndroidViewModel {
 
     public LiveData<List<RecipeAndCounts>> getAvailableRecipes(boolean refresh) {
         if (availableRecipes == null || refresh) {
-            availableRecipes = recipeDao.getSuitableRecipes(availableIngredientIds, MAX_MISSING_INGREDIENTS, AVAILABLE_RECIPE_LIMIT);
+            availableRecipes = recipeDao.getSuitableRecipes(MAX_MISSING_INGREDIENTS, AVAILABLE_RECIPE_LIMIT);
         }
         return availableRecipes;
     }
