@@ -1,6 +1,7 @@
 package cs446.uwaterloo.pocketchef.model;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
@@ -22,7 +23,9 @@ import androidx.room.Index;
 )
 public class RecipeIngredientsAssociation {
     @NonNull
+    @ColumnInfo(index = true)
     public long recipe_id;
     @NonNull
+    @ColumnInfo(index = true)
     public long ingredient_id;
 }

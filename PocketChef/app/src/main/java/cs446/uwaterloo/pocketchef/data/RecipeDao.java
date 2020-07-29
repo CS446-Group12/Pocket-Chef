@@ -12,6 +12,7 @@ import java.util.List;
 
 import cs446.uwaterloo.pocketchef.model.Recipe;
 import cs446.uwaterloo.pocketchef.model.RecipeAndCounts;
+import cs446.uwaterloo.pocketchef.model.RecipeAndIngredients;
 
 @Dao
 public interface RecipeDao {
@@ -41,4 +42,10 @@ public interface RecipeDao {
 
     @Query("SELECT * FROM RECIPE WHERE ID = :id LIMIT 1;")
     LiveData<Recipe> getRecipeById(int id);
+
+    @Transaction
+    @Query("SELECT * FROM " +
+            "RECIPE " +
+            "WHERE ID = :recipeId")
+    LiveData<RecipeAndIngredients> getRecipeAndIngredients(int recipeId);
 }
