@@ -26,16 +26,20 @@ public interface RecipeDao {
     LiveData<List<RecipeAndCounts>> getAllRecipesAndCounts(int count);
 
     @Transaction
-    @Query("SELECT r.*, count(r.id) as matches, rc.ingredientCount - count(r.id) AS numMissing, rc.ingredientCount " +
-            "FROM RECIPE r INNER JOIN RECIPE_INGREDIENT ri ON r.ID = ri.recipe_id " +
-            "    INNER JOIN RECIPE_INGREDIENT_COUNT rc on r.ID = rc.recipe_id " +
-            "WHERE ri.ingredient_id IN(:ingredientIds)" +
-            "GROUP BY r.ID " +
-            "HAVING numMissing <= :maxNumberOfMissingIngredients " +
-            "ORDER BY numMissing ASC " +
-            "LIMIT :count")
+    @Query("SELECT r.*, " +
+           "    COUNT(ri.ingredient_id) as ingredientCount, " +
+           "    COUNT(NULLIF(i.stock, 0)) as matches, " +
+           "    COUNT(ri.ingredient_id) - COUNT(NULLIF(i.stock, 0)) as numMissing " +
+           "FROM RECIPE r " +
+           "    INNER JOIN RECIPE_INGREDIENT ri ON r.ID = ri.recipe_id " +
+           "    INNER JOIN INGREDIENT i ON i.ID = ri.ingredient_id " +
+           "GROUP BY r.ID " +
+           "HAVING numMissing <= :maxNumberOfMissingIngredients AND matches > numMissing " +
+           "ORDER BY numMissing ASC, matches DESC " +
+           "LIMIT :count"
+    )
     LiveData<List<RecipeAndCounts>>
-    getSuitableRecipes(Collection<Integer> ingredientIds, int maxNumberOfMissingIngredients, int count);
+    getSuitableRecipes(int maxNumberOfMissingIngredients, int count);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateRecipes(Recipe... recipes);
