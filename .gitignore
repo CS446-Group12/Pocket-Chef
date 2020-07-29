@@ -1,2 +1,3 @@
-db/recipes.db
+PocketChef/app/src/main/assets/recipes.db
 __pycache__
+*.pyc

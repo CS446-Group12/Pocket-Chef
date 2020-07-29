@@ -1,27 +1,28 @@
 import json
 
 class recipe:
-    def __init__(self, directions, fat, categories, calories, desc, protein, rating, title, ingredients, sodium):
+    def __init__(self, directions, fat, categories, calories, desc, protein, rating, title, ingredients, sodium, ingredient_ids):
         self.directions = directions
-        self.directions_str = '\n'.join(directions)
-        self.fat = fat
+        self.directions_str = '\0'.join(directions)
+        self.fat = int(fat) if fat else None
         self.categories = categories
-        self.calories = calories
+        self.calories = int(calories) if calories else None
         self.desc = desc
-        self.protein = protein
-        self.rating = rating
+        self.protein = int(protein) if protein else None
+        self.rating = rating if rating else None
         self.title = title
         self.ingredients = ingredients
-        self.ingredients_str = '\n'.join(ingredients)
-        self.sodium = sodium
+        self.ingredient_ids = ingredient_ids
+        self.ingredients_str = '\0'.join(ingredients)
+        self.sodium = int(sodium) if sodium else None
 
 def get_recipes():
-    with open('db/full_format_recipes.json') as json_file:
+    with open('db/data/recipes.json') as json_file:
         data = json.load(json_file)
         recipes = []
         for p in data:
             if not p: continue
-            r = recipe(p['directions'], p['fat'], p['categories'], p['calories'], p['desc'], p['protein'], p['rating'], p['title'], p['ingredients'], p['sodium'])
+            r = recipe(p['directions'], p['fat'], p['categories'], p['calories'], p['desc'], p['protein'], p['rating'], p['title'], p['ingredients'], p['sodium'], p['ingredient_ids'])
             recipes.append(r)
 
     return recipes

@@ -10,11 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import cs446.uwaterloo.pocketchef.CookingActivity;
 import cs446.uwaterloo.pocketchef.R;
-import cs446.uwaterloo.pocketchef.model.Ingredient;
 import cs446.uwaterloo.pocketchef.model.Recipe;
 
 /**
@@ -37,22 +36,22 @@ public class CookingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cookingViewModel = ViewModelProviders.of(this).get(CookingViewModel.class);
-
         // Get Recipe from CookingActivity
         CookingActivity cookingActivity = (CookingActivity) getActivity();
+        assert cookingActivity != null;
         Recipe recipe = cookingActivity.getRecipe();
 
         int index = 1;
         if (getArguments() != null) {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
         }
-        //cookingViewModel.setIndex(index);
+
+        cookingViewModel = new ViewModelProvider(this).get(CookingViewModel.class);
 
         if (index == 1) {
-            cookingViewModel.setData(prettyPrintIngredients(recipe));
-        } else if (index == 2){
-            cookingViewModel.setData(prettyPrintSteps(recipe));
+            cookingViewModel.setMainText(prettyPrintIngredients(recipe));
+        } else if (index == 2) {
+            cookingViewModel.setMainText(prettyPrintSteps(recipe));
         }
     }
 
@@ -62,12 +61,13 @@ public class CookingFragment extends Fragment {
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_cooking, container, false);
         final TextView textView = root.findViewById(R.id.section_label);
-        cookingViewModel.getText().observe(this, new Observer<String>() {
+        cookingViewModel.getMainText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
         });
+
         return root;
     }
 
@@ -79,19 +79,21 @@ public class CookingFragment extends Fragment {
     /* Methods for outputting strings */
     private String prettyPrintIngredients(Recipe recipe) {
         String rtnStr = "";
-        for (Ingredient i : recipe.getAllIngredients()) {
-            rtnStr += i.toString() + "\n\n";
-        }
+        if (recipe != null)
+            for (String line : recipe.getIngredients()) {
+                rtnStr += line + "\n\n";
+            }
         return rtnStr;
     }
 
     private String prettyPrintSteps(Recipe recipe) {
         String rtnStr = "";
         int counter = 1;
-        for (String s : recipe.getSteps()) {
-            rtnStr += "Step " + counter + ": " + s + "\n\n";
-            counter += 1;
-        }
+        if (recipe != null)
+            for (String s : recipe.getDirections()) {
+                rtnStr += "Step " + counter + ": " + s + "\n\n";
+                counter += 1;
+            }
         return rtnStr;
     }
 }

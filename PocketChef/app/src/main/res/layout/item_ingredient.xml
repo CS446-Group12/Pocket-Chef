@@ -19,14 +19,6 @@
             android:textSize="18sp"
             android:typeface="normal" />
 
-        <TextView
-            android:id="@+id/ingredient_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:contextClickable="false"
-            android:ems="10"
-            android:singleLine="true" />
     </LinearLayout>
 
     <ImageButton

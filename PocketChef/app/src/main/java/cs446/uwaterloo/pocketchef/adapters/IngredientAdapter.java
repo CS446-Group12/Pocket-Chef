@@ -10,16 +10,25 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import cs446.uwaterloo.pocketchef.R;
-import cs446.uwaterloo.pocketchef.data.IngredientData;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
+import cs446.uwaterloo.pocketchef.ui.pantry.PantryFragment;
 
-public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.ViewHolder>{
+public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.ViewHolder> {
 
-    public IngredientAdapter() {}
+    private PantryFragment fragment;
+
+    private List<Ingredient> availableIngredients;
+
+    public IngredientAdapter(PantryFragment fragment) {
+        this.fragment = fragment;
+        this.availableIngredients = new ArrayList<>();
+    }
+
+    // TODO implement searching on client side
 
     @NonNull
     @Override
@@ -37,39 +46,35 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
 
     }
 
+
     //Populate data into the item through holder
     @Override
     public void onBindViewHolder(IngredientAdapter.ViewHolder holder, int position) {
 
         // Get the data model based on position
-        final Ingredient ingredient = IngredientData.manager.getDisplayIngredients().get(position);
+        final Ingredient ingredient = availableIngredients.get(position);
 
         // Set item views based on your views and data model
         TextView textView = holder.ingredientTextView;
-        textView.setText(ingredient.getName());
-
-        TextView dateView = holder.ingredientDateView;
-        if (ingredient.getExpirationDate() != null) {
-            dateView.setText(dateView.getContext().getString(
-                    R.string.ingredient_expiration_date,
-                    SimpleDateFormat.getDateInstance().format(ingredient.getExpirationDate())));
-        } else {
-            dateView.setVisibility(View.INVISIBLE);
-        }
-
+        textView.setText(ingredient.name);
 
         ImageButton deleteButton = holder.deleteButton;
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IngredientData.manager.removeIngredients(ingredient);
+                fragment.deleteIngredient(ingredient);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return IngredientData.manager.getDisplayIngredients().size();
+        return availableIngredients.size();
+    }
+
+    public void setAvailableIngredients(List<Ingredient> ingredients) {
+        availableIngredients = ingredients;
+        notifyDataSetChanged();
     }
 
     // Provide a direct reference to each of the views within a data item
@@ -79,18 +84,18 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
         public TextView ingredientTextView;
         public ImageButton deleteButton;
         public TextView ingredientDateView;
+
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
          public ViewHolder(View itemView) {
 
-            // Stores the itemView in a public final member variable that can be used
-            // to access the context from any ViewHolder instance.
-            super(itemView);
+             // Stores the itemView in a public final member variable that can be used
+             // to access the context from any ViewHolder instance.
+             super(itemView);
 
-            ingredientTextView = (TextView) itemView.findViewById(R.id.ingredient_text);
-            ingredientDateView = (TextView) itemView.findViewById(R.id.ingredient_date);
-            deleteButton = (ImageButton) itemView.findViewById(R.id.delete_ingredient_button);
+             ingredientTextView = itemView.findViewById(R.id.ingredient_text);
+             deleteButton = itemView.findViewById(R.id.delete_ingredient_button);
 
-        }
+         }
     }
 }
