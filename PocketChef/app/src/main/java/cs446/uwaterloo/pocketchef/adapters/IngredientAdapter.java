@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import cs446.uwaterloo.pocketchef.R;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
@@ -20,7 +21,6 @@ import cs446.uwaterloo.pocketchef.ui.pantry.PantryFragment;
 public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.ViewHolder> {
 
     private PantryFragment fragment;
-
     private List<Ingredient> availableIngredients;
 
     public IngredientAdapter(PantryFragment fragment) {
@@ -58,6 +58,13 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
         TextView textView = holder.ingredientTextView;
         textView.setText(ingredient.name);
 
+        final String stock_template = "Current stock: %s";
+        int int_stock = (int) ingredient.stock;
+        String stock = (ingredient.stock == int_stock)
+                ? String.format("%s", int_stock)
+                : String.format("%s", ingredient.stock);
+        holder.stockTextView.setText(String.format(stock_template, stock));
+
         ImageButton deleteButton = holder.deleteButton;
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +90,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
 
         public TextView ingredientTextView;
         public ImageButton deleteButton;
-        public TextView ingredientDateView;
+        public TextView stockTextView;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -94,6 +101,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
              super(itemView);
 
              ingredientTextView = itemView.findViewById(R.id.ingredient_text);
+             stockTextView = itemView.findViewById(R.id.ingredient_stock_text);
              deleteButton = itemView.findViewById(R.id.delete_ingredient_button);
 
          }
