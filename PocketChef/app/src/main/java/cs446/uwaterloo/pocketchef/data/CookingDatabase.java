@@ -6,22 +6,27 @@ import android.util.Log;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import cs446.uwaterloo.pocketchef.model.Consumption;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
 import cs446.uwaterloo.pocketchef.model.Recipe;
 import cs446.uwaterloo.pocketchef.model.RecipeIngredientCount;
 import cs446.uwaterloo.pocketchef.model.RecipeIngredientsAssociation;
+import cs446.uwaterloo.pocketchef.model.util.Converters;
 
 @Database(version = 1, entities = {
         Ingredient.class,
         Recipe.class,
         RecipeIngredientsAssociation.class,
+        Consumption.class
 }, views = {
         RecipeIngredientCount.class,
 })
+@TypeConverters({Converters.class})
 public abstract class CookingDatabase extends RoomDatabase {
 
     public abstract IngredientDao ingredientDao();
