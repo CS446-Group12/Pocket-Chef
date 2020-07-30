@@ -31,6 +31,6 @@ def read_ingredients():
         ingredients = {}
         for p in data:
             if not p: continue
-            ingredients[p['id']] = p['name'].lower()
+            ingredients[p['id']] = p['name']
     return ingredients
     
