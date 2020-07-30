@@ -5,8 +5,13 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.text.NumberFormat;
+
 @Entity(tableName = "INGREDIENT")
 public class Ingredient {
+
+    private static NumberFormat formatter = NumberFormat.getNumberInstance();
+
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "ID", index = true)
     public int id;
@@ -32,5 +37,9 @@ public class Ingredient {
                 ", name='" + name + '\'' +
                 ", stock=" + stock +
                 '}';
+    }
+
+    public String getFormattedStock() {
+        return formatter.format(stock);
     }
 }

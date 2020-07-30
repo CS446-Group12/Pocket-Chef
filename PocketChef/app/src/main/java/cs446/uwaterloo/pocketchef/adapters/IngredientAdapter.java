@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import cs446.uwaterloo.pocketchef.R;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
@@ -59,10 +58,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
         textView.setText(ingredient.name);
 
         final String stock_template = "Current stock: %s";
-        int int_stock = (int) ingredient.stock;
-        String stock = (ingredient.stock == int_stock)
-                ? String.format("%s", int_stock)
-                : String.format("%s", ingredient.stock);
+        String stock = ingredient.getFormattedStock();
         holder.stockTextView.setText(String.format(stock_template, stock));
 
         ImageButton deleteButton = holder.deleteButton;

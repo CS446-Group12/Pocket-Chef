@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +22,6 @@ public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsage
 
     private static final double STEP_SIZE = 0.5;
     private List<Ingredient> ingredients;
-
-    private static NumberFormat formatter = NumberFormat.getNumberInstance();
 
     public IngredientUsageAdapter() {
         this.ingredients = new ArrayList<>();
@@ -55,7 +52,7 @@ public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsage
         ingredientNameView.setText(ingredient.name);
 
         final EditText ingredientQuantityView = holder.ingredientQuantityView;
-        ingredientQuantityView.setText(formatter.format(ingredient.stock));
+        ingredientQuantityView.setText(ingredient.getFormattedStock());
 
         Button subtractButton = holder.subtractButton;
         subtractButton.setText("-");
@@ -152,7 +149,7 @@ public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsage
 
             ingredient.stock = value;
 
-            ingredientQuantityView.setText(formatter.format(value));
+            ingredientQuantityView.setText(ingredient.getFormattedStock());
         }
     }
 }
