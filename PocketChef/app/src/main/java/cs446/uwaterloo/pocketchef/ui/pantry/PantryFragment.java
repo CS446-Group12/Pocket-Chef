@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,6 +39,7 @@ import cs446.uwaterloo.pocketchef.adapters.IngredientAdapter;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
 
 public class PantryFragment extends Fragment {
+    private static final String TAG = "Pantry";
 
     private RecyclerView pantryView;
     private Toolbar toolbar;
@@ -90,7 +93,7 @@ public class PantryFragment extends Fragment {
         pantryViewModel.getAllIngredients().observe(getViewLifecycleOwner(), new Observer<List<Ingredient>>() {
             @Override
             public void onChanged(final List<Ingredient> ingredients) {
-                Log.d("Pantry", "Got " + ingredients.size() + " ingredients in total.");
+                Log.d(TAG, "Got " + ingredients.size() + " ingredients in total.");
                 ingredientNameSuggestionAdapter.clear();
                 for (Ingredient i : ingredients) {
                     ingredientNameSuggestionAdapter.add(i.name);
@@ -133,7 +136,7 @@ public class PantryFragment extends Fragment {
                             @Override
                             public void onChanged(List<Ingredient> ingredients) {
                                 adapter.setAvailableIngredients(ingredients);
-                                Log.d("Pantry", "Got " + ingredients.size() + " filtered ingredients!");
+                                Log.d(TAG, "Got " + ingredients.size() + " filtered ingredients!");
                             }
                         }
                 );
@@ -177,7 +180,24 @@ public class PantryFragment extends Fragment {
         alertBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialog, int which) {
-                final int selected = nameEditText.getListSelection();
+                final int selected  = nameEditText.getListSelection();
+                final String name   = nameEditText.getText().toString().trim();
+                final String amount = amountEditText.getText().toString().trim();
+
+                // It should not be possible that the alert's positive button was selected when
+                // either the name or amount were left as empty fields. In the case that it does
+                // happen, log an error, display a toast message to the user, and do not submit.
+                if (name.isEmpty() || amount.isEmpty()) {
+                    Log.e(TAG, String.format(
+                            "Add click detected despite no text present for name or field(s). " +
+                            "Name: '%s'. Amount: '%s'", name, amount));
+                    Toast.makeText(
+                            getActivity(),
+                            "Ingredient name and amount must be filled",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 // This needs to be on a background thread since it queries the DB
                 new Thread(new Runnable() {
                     @Override
@@ -187,25 +207,31 @@ public class PantryFragment extends Fragment {
                         if (selected != ListView.INVALID_POSITION) {
                             ingredient = (Ingredient) nameEditText.getAdapter().getItem(selected);
                         } else {
-                            ingredient = pantryViewModel.findIngredientByName(nameEditText.getText().toString());
+                            ingredient = pantryViewModel.findIngredientByName(name);
                             if (ingredient == null) {
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(getActivity(), "Couldn't find " + nameEditText.getText(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(
+                                                getActivity(),
+                                                "Couldn't find " + name,
+                                                Toast.LENGTH_SHORT).show();
                                     }
                                 });
                                 return;
                             }
                         }
 
-                        ingredient.stock = Double.parseDouble(amountEditText.getText().toString());
+                        ingredient.stock = Double.parseDouble(amount);
                         pantryViewModel.updateIngredient(ingredient);
 
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getActivity(), "Added " + nameEditText.getText(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(
+                                        getActivity(),
+                                        "Added " + name,
+                                        Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             }
                         });
@@ -222,7 +248,66 @@ public class PantryFragment extends Fragment {
             }
         });
 
-        alertBuilder.show();
+        final AlertDialog alert = alertBuilder.create();
+
+        // Disable the positive button (to add the ingredient) initially unless the amount and name
+        // fields are already filled. This currently should not be the case; however, in the future
+        // previous states may be saved.
+        alert.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(
+                        !amountEditText.getText().toString().trim().isEmpty() &&
+                        !nameEditText.getText().toString().trim().isEmpty());
+            }
+        });
+
+        // This must be a final array to satisfy accessing within the addTextChangeListeners below.
+        // The array records whether the both text fields in the alert dialog are currently filled.
+        // If either is not, then the positive button of the dialog should not be active.
+        final Boolean[] fieldsFilled = {false, false};
+
+        // Add a text listener to the name text view to update whether its field is or is not
+        // filled. If all fields are, then this will activate the positive alert button. If one or
+        // more are not, then the positive alert button will be deactivated.
+        nameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                fieldsFilled[0] = !s.toString().trim().isEmpty();
+                boolean allFilled = true;
+                for (final Boolean filled : fieldsFilled)
+                    allFilled &= filled;
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(allFilled);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        // Add a text listener to the amount text view to update whether its field is or is not
+        // filled. If all fields are, then this will activate the positive alert button. If one or
+        // more are not, then the positive alert button will be deactivated.
+        amountEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                fieldsFilled[1] = !s.toString().trim().isEmpty();
+                boolean allFilled = true;
+                for (final Boolean filled : fieldsFilled)
+                    allFilled &= filled;
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(allFilled);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        alert.show();
     }
 
     public void deleteIngredient(Ingredient ingredient) {
