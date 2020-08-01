@@ -23,6 +23,9 @@ public class Ingredient {
     @ColumnInfo(name = "Stock", defaultValue = "0")
     public double stock;
 
+    @ColumnInfo(name = "BURNED", defaultValue = "0")
+    public double burned;
+
     public Ingredient(int id, @NonNull String name, double stock) {
         this.id = id;
         this.name = name;
@@ -41,5 +44,8 @@ public class Ingredient {
 
     public String getFormattedStock() {
         return formatter.format(stock);
+    }
+    public String getFormattedBurnrate() {
+        return formatter.format(burned);
     }
 }

@@ -1,0 +1,272 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "b0222a29ff05e0a856ff87a2d1b229c4",
+    "entities": [
+      {
+        "tableName": "INGREDIENT",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `NAME` TEXT NOT NULL, `Stock` REAL NOT NULL DEFAULT 0, `BURNED` REAL NOT NULL DEFAULT 0)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "ID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "NAME",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stock",
+            "columnName": "Stock",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "burned",
+            "columnName": "BURNED",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_INGREDIENT_ID",
+            "unique": false,
+            "columnNames": [
+              "ID"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_INGREDIENT_ID` ON `${TABLE_NAME}` (`ID`)"
+          },
+          {
+            "name": "index_INGREDIENT_NAME",
+            "unique": false,
+            "columnNames": [
+              "NAME"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_INGREDIENT_NAME` ON `${TABLE_NAME}` (`NAME`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "RECIPE",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `desc` TEXT, `fat` INTEGER, `calories` INTEGER, `protein` INTEGER, `rating` REAL NOT NULL DEFAULT 0, `sodium` INTEGER, `ingredients` TEXT NOT NULL, `directions` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "ID",
+            "columnName": "ID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "desc",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fat",
+            "columnName": "fat",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "calories",
+            "columnName": "calories",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "protein",
+            "columnName": "protein",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rating",
+            "columnName": "rating",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "sodium",
+            "columnName": "sodium",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ingredientText",
+            "columnName": "ingredients",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "directionText",
+            "columnName": "directions",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "RECIPE_INGREDIENT",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipe_id` INTEGER NOT NULL, `ingredient_id` INTEGER NOT NULL, PRIMARY KEY(`recipe_id`, `ingredient_id`), FOREIGN KEY(`recipe_id`) REFERENCES `RECIPE`(`ID`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`ingredient_id`) REFERENCES `INGREDIENT`(`ID`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "recipe_id",
+            "columnName": "recipe_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ingredient_id",
+            "columnName": "ingredient_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "recipe_id",
+            "ingredient_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_RECIPE_INGREDIENT_recipe_id_ingredient_id",
+            "unique": true,
+            "columnNames": [
+              "recipe_id",
+              "ingredient_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_RECIPE_INGREDIENT_recipe_id_ingredient_id` ON `${TABLE_NAME}` (`recipe_id`, `ingredient_id`)"
+          },
+          {
+            "name": "index_RECIPE_INGREDIENT_recipe_id",
+            "unique": false,
+            "columnNames": [
+              "recipe_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RECIPE_INGREDIENT_recipe_id` ON `${TABLE_NAME}` (`recipe_id`)"
+          },
+          {
+            "name": "index_RECIPE_INGREDIENT_ingredient_id",
+            "unique": false,
+            "columnNames": [
+              "ingredient_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RECIPE_INGREDIENT_ingredient_id` ON `${TABLE_NAME}` (`ingredient_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "RECIPE",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "recipe_id"
+            ],
+            "referencedColumns": [
+              "ID"
+            ]
+          },
+          {
+            "table": "INGREDIENT",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "ingredient_id"
+            ],
+            "referencedColumns": [
+              "ID"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "CONSUMPTION",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ingredient_id` INTEGER NOT NULL, `date` TEXT NOT NULL, `amount` REAL NOT NULL, PRIMARY KEY(`ingredient_id`, `date`), FOREIGN KEY(`ingredient_id`) REFERENCES `INGREDIENT`(`ID`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "ingredient_id",
+            "columnName": "ingredient_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "amount",
+            "columnName": "amount",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ingredient_id",
+            "date"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "INGREDIENT",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "ingredient_id"
+            ],
+            "referencedColumns": [
+              "ID"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [
+      {
+        "viewName": "RECIPE_INGREDIENT_COUNT",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT r.ID as recipe_id, COUNT(ri.ingredient_id) as ingredientCount FROM RECIPE r INNER JOIN RECIPE_INGREDIENT ri ON r.ID = ri.recipe_id GROUP BY r.ID"
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b0222a29ff05e0a856ff87a2d1b229c4')"
+    ]
+  }
+}
