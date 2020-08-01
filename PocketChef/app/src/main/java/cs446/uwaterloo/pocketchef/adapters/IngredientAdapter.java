@@ -73,12 +73,6 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
         final String burnrate_template = "Burn/wk: %s";
         holder.burnrateTextView.setText(String.format(burnrate_template, ""+burnrate));
 
-       /*8 if (burnrate > ingredient.stock) {
-            holder.lowTextView.setText("low)");
-        } else {
-            holder.lowTextView.setText("");
-        }*/
-
         ImageButton deleteButton = holder.deleteButton;
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +113,6 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
              ingredientTextView = itemView.findViewById(R.id.ingredient_text);
              stockTextView = itemView.findViewById(R.id.ingredient_stock_text);
              burnrateTextView = itemView.findViewById(R.id.ingredient_burnrate_text);
-           //  lowTextView = itemView.findViewById(R.id.ingredient_low_text);
              deleteButton = itemView.findViewById(R.id.delete_ingredient_button);
 
          }

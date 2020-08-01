@@ -155,17 +155,6 @@ public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsage
             ingredient.burned += Math.max(ingredient.stock - value, 0);
             ingredient.stock = value;
 
-            // int count = pref.getInt("your key", 0) //0 is default value.
-            //  count++;
-//            Date date = new Date(System.currentTimeMillis());
-//            if (pref.getLong("inittime", 0) == 0) {
-//                pref.edit().putLong("inittime", date.getTime()).apply();
-//            }
-    //          long msDiff = Calendar.getInstance().getTimeInMillis() - pref.getLong("inittime", 0);
-    //          long weeksDiff = Math.max(TimeUnit.MILLISECONDS.toDays(msDiff)/7, 1);
-
-    //        Toast.makeText(view.getContext(), "" + weeksDiff, Toast.LENGTH_SHORT).show();
-
             ingredientQuantityView.setText(ingredient.getFormattedStock());
         }
     }

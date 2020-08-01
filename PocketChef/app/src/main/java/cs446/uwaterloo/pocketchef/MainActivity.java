@@ -23,17 +23,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences pref = this.getSharedPreferences("Share", Context.MODE_PRIVATE);
-       // int count = pref.getInt("your key", 0) //0 is default value.
-      //  count++;
-        Date date = new Date(System.currentTimeMillis());
-        if (pref.getLong("inittime", 0) == 0) {
-            pref.edit().putLong("inittime", date.getTime()).apply();
-        }
-
-      //  edit.commit();
-      //  long msDiff = Calendar.getInstance().getTimeInMillis() - testCalendar.getTimeInMillis();
-     //   long daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -45,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
+
+        //Store base date for burn rate
+        SharedPreferences pref = this.getSharedPreferences("Share", Context.MODE_PRIVATE);
+        Date date = new Date(System.currentTimeMillis());
+        if (pref.getLong("inittime", 0) == 0) {
+            pref.edit().putLong("inittime", date.getTime()).apply();
+        }
     }
 
     public void displayRecipeContents(Recipe recipe) {
