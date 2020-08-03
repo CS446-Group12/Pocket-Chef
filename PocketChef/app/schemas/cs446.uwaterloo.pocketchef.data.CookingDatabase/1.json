@@ -2,11 +2,12 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b0222a29ff05e0a856ff87a2d1b229c4",
+
+    "identityHash": "01c1c5ffde57d9526dd0f97cc96f77d9",
     "entities": [
       {
         "tableName": "INGREDIENT",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `NAME` TEXT NOT NULL, `Stock` REAL NOT NULL DEFAULT 0, `BURNED` REAL NOT NULL DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `NAME` TEXT NOT NULL, `Stock` REAL NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -26,13 +27,7 @@
             "affinity": "REAL",
             "notNull": true,
             "defaultValue": "0"
-          },
-          {
-            "fieldPath": "burned",
-            "columnName": "BURNED",
-            "affinity": "REAL",
-            "notNull": true,
-            "defaultValue": "0"
+
           }
         ],
         "primaryKey": {
@@ -211,51 +206,6 @@
             ]
           }
         ]
-      },
-      {
-        "tableName": "CONSUMPTION",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ingredient_id` INTEGER NOT NULL, `date` TEXT NOT NULL, `amount` REAL NOT NULL, PRIMARY KEY(`ingredient_id`, `date`), FOREIGN KEY(`ingredient_id`) REFERENCES `INGREDIENT`(`ID`) ON UPDATE NO ACTION ON DELETE CASCADE )",
-        "fields": [
-          {
-            "fieldPath": "ingredient_id",
-            "columnName": "ingredient_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "date",
-            "columnName": "date",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "amount",
-            "columnName": "amount",
-            "affinity": "REAL",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "ingredient_id",
-            "date"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": [
-          {
-            "table": "INGREDIENT",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "ingredient_id"
-            ],
-            "referencedColumns": [
-              "ID"
-            ]
-          }
-        ]
       }
     ],
     "views": [
@@ -267,6 +217,7 @@
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
       "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b0222a29ff05e0a856ff87a2d1b229c4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '01c1c5ffde57d9526dd0f97cc96f77d9')"
     ]
   }
 }
