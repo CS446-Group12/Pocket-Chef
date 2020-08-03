@@ -2,6 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
+
     "identityHash": "01c1c5ffde57d9526dd0f97cc96f77d9",
     "entities": [
       {
@@ -26,6 +27,7 @@
             "affinity": "REAL",
             "notNull": true,
             "defaultValue": "0"
+
           }
         ],
         "primaryKey": {
@@ -214,6 +216,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b0222a29ff05e0a856ff87a2d1b229c4')"
       "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '01c1c5ffde57d9526dd0f97cc96f77d9')"
     ]
   }

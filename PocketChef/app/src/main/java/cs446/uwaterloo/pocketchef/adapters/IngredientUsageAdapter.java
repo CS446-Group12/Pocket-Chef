@@ -1,6 +1,7 @@
 package cs446.uwaterloo.pocketchef.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import cs446.uwaterloo.pocketchef.R;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
@@ -140,6 +144,7 @@ public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsage
             switch (mode) {
                 case ADD:
                     value += STEP_SIZE;
+
                     break;
                 case SUBTRACT:
                     if (value > STEP_SIZE) {
@@ -147,6 +152,7 @@ public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsage
                     }
             }
 
+            ingredient.burned += Math.max(ingredient.stock - value, 0);
             ingredient.stock = value;
 
             ingredientQuantityView.setText(ingredient.getFormattedStock());

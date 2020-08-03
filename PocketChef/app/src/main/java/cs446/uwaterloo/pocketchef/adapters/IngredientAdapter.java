@@ -1,6 +1,8 @@
 package cs446.uwaterloo.pocketchef.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import cs446.uwaterloo.pocketchef.R;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
@@ -21,6 +25,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
 
     private PantryFragment fragment;
     private List<Ingredient> availableIngredients;
+    private SharedPreferences pref;
 
     public IngredientAdapter(PantryFragment fragment) {
         this.fragment = fragment;
@@ -34,6 +39,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         Context context = parent.getContext();
+        pref = context.getSharedPreferences("Share", Context.MODE_PRIVATE);
         LayoutInflater inflater = LayoutInflater.from(context);
 
         //Inflate the custom layout
@@ -61,6 +67,12 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
         String stock = ingredient.getFormattedStock();
         holder.stockTextView.setText(String.format(stock_template, stock));
 
+        long msDiff = Calendar.getInstance().getTimeInMillis() - pref.getLong("inittime", 0);
+        long weeksDiff = Math.max(TimeUnit.MILLISECONDS.toDays(msDiff)/7, 1);
+        int burnrate = (int)Math.ceil(ingredient.burned / weeksDiff);
+        final String burnrate_template = "Burn/wk: %s";
+        holder.burnrateTextView.setText(String.format(burnrate_template, ""+burnrate));
+
         ImageButton deleteButton = holder.deleteButton;
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +99,8 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
         public TextView ingredientTextView;
         public ImageButton deleteButton;
         public TextView stockTextView;
+        public TextView burnrateTextView;
+        public TextView lowTextView;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -98,6 +112,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
 
              ingredientTextView = itemView.findViewById(R.id.ingredient_text);
              stockTextView = itemView.findViewById(R.id.ingredient_stock_text);
+             burnrateTextView = itemView.findViewById(R.id.ingredient_burnrate_text);
              deleteButton = itemView.findViewById(R.id.delete_ingredient_button);
 
          }

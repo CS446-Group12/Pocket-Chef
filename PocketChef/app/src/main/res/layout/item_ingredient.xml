@@ -15,6 +15,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="18sp"
         android:typeface="normal"
+        android:gravity="fill_horizontal"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -39,5 +40,19 @@
         android:textSize="14sp"
         android:typeface="normal"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/ingredient_burnrate_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textSize="14sp"
+        android:typeface="normal"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
