@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class IngredientUsageAdapter extends RecyclerView.Adapter<IngredientUsage
 
         // Inflate the custom layout
         View ingredientUsageView = inflater.inflate(R.layout.item_ingredient_quantity, parent, false);
+        // Make progress bar visible
 
         // Return a new holder instance
         return new ViewHolder(ingredientUsageView);

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,7 +49,9 @@ public class IngredientUsageFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.fragment_ingredient_usage, null);
-
+        // Show progress bar
+        final ProgressBar pBar = (ProgressBar) view.findViewById(R.id.pBar);
+        pBar.setVisibility(View.VISIBLE);
         // Lookup RecyclerView
         recyclerView = view.findViewById(R.id.ingredient_usage_view);
         // Create adapter and pass in Ingredients
@@ -72,9 +75,15 @@ public class IngredientUsageFragment extends DialogFragment {
                                 recipeAndIngredients.recipe.title,
                                 TextUtils.join(",", recipeAndIngredients.ingredients)
                         ));
+                pBar.setVisibility(View.GONE);
                 adapter.setIngredients(recipeAndIngredients.ingredients);
+
+
             }
         });
+
+
+
 
         builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override

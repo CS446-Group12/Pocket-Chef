@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -69,11 +70,15 @@ public class PantryFragment extends Fragment {
         // get an existing ViewModel or create one if they don't exist
         pantryViewModel = new ViewModelProvider(this).get(PantryViewModel.class);
 
-        // TODO add a loading screen before this is ready since it looks like broken
+        // Show progress bar
+        final ProgressBar pBar = (ProgressBar) root.findViewById(R.id.pantryPBar);
+        pBar.setVisibility(View.VISIBLE);
+
         // observe changes in ingredients available to the user
         pantryViewModel.getAvailableIngredients().observe(getViewLifecycleOwner(), new Observer<List<Ingredient>>() {
             @Override
             public void onChanged(List<Ingredient> ingredients) {
+                pBar.setVisibility(View.GONE);
                 adapter.setAvailableIngredients(ingredients);
             }
         });
