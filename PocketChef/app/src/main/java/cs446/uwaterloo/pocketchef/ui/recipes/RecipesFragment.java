@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -32,6 +33,7 @@ public class RecipesFragment extends Fragment {
     private RecipeAdapter adapter;
     private ToggleButton recipesForIngredientsButton;
     private boolean ingredientRecipesShown = false;
+    public ProgressBar pBar;
 
     private RecipesViewModel recipesViewModel;
 
@@ -43,15 +45,20 @@ public class RecipesFragment extends Fragment {
         recipeView.setAdapter(adapter);
 
         recipesViewModel = new ViewModelProvider(this).get(RecipesViewModel.class);
+        pBar = (ProgressBar) view.findViewById(R.id.recipesPBar);
+        pBar.setVisibility(View.VISIBLE);
+
         recipesViewModel.getAvailableRecipes().observe(getViewLifecycleOwner(), new Observer<List<RecipeAndCounts>>() {
             @Override
             public void onChanged(List<RecipeAndCounts> recipeAndCounts) {
+                pBar.setVisibility(View.GONE);
                 adapter.setAvailableRecipes(recipeAndCounts);
             }
         });
         recipesViewModel.getAllRecipes().observe(getViewLifecycleOwner(), new Observer<List<RecipeAndCounts>>() {
             @Override
             public void onChanged(List<RecipeAndCounts> recipeAndCounts) {
+                pBar.setVisibility(View.GONE);
                 adapter.setAllRecipes(recipeAndCounts);
             }
         });
@@ -63,10 +70,10 @@ public class RecipesFragment extends Fragment {
             recipeView.addItemDecoration(itemDecoration);
             recipeView.setLayoutManager(new LinearLayoutManager(context));
         }
-
         recipesForIngredientsButton = view.findViewById(R.id.recipes_for_current_ingredients_button);
 
         recipesForIngredientsButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 adapter.switchShownRecipes(recipesForIngredientsButton.isChecked());
@@ -116,4 +123,5 @@ public class RecipesFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         return true;
     }
+
 }

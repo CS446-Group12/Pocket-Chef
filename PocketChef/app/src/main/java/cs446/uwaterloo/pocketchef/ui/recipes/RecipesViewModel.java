@@ -1,12 +1,15 @@
 package cs446.uwaterloo.pocketchef.ui.recipes;
 
 import android.app.Application;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 import java.util.List;
+import java.util.zip.Inflater;
 
 import cs446.uwaterloo.pocketchef.data.CookingDatabase;
 import cs446.uwaterloo.pocketchef.data.IngredientDao;
@@ -29,6 +32,8 @@ public class RecipesViewModel extends AndroidViewModel {
     private LiveData<List<RecipeAndCounts>> availableRecipes = null;
 
     private LiveData<List<RecipeAndCounts>> allRecipes;
+
+    private ProgressBar pBar;
 
     private Observer<List<Ingredient>> ingredientObserver = new Observer<List<Ingredient>>() {
         @Override

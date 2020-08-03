@@ -11,7 +11,6 @@ import androidx.room.TypeConverters;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import cs446.uwaterloo.pocketchef.model.Consumption;
 import cs446.uwaterloo.pocketchef.model.Ingredient;
 import cs446.uwaterloo.pocketchef.model.Recipe;
 import cs446.uwaterloo.pocketchef.model.RecipeIngredientCount;
@@ -22,7 +21,6 @@ import cs446.uwaterloo.pocketchef.model.util.Converters;
         Ingredient.class,
         Recipe.class,
         RecipeIngredientsAssociation.class,
-        Consumption.class
 }, views = {
         RecipeIngredientCount.class,
 })
